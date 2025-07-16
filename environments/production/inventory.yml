@@ -1,0 +1,98 @@
+---
+# YAML format inventory with nested groups for variable inheritance
+# Mason Morales, Splunk, Inc.
+# References:
+# https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html
+# Read this: https://docs.ansible.com/ansible/2.9/plugins/inventory/yaml.html
+# https://www.digitalocean.com/community/tutorials/how-to-manage-multistage-environments-with-ansible
+# ##########################################################################
+all:
+  children:
+
+    full:
+      children:
+
+        licensemaster:
+          hosts:
+            #This needed to be renamed to my-shc-deployer because tasks were being executed twice on this server.
+            my-shc-deployer:
+              ansible_host: 10.5.35.250
+
+        deploymentserver:
+          hosts:
+            my-ds:
+              ansible_host: 10.5.35.251
+        dmc:
+          hosts:
+            my-dmc-host:
+              ansible_host: 10.5.35.248
+
+        shdeployer:
+          hosts:
+            my-shc-deployer:
+              ansible_host: 10.5.35.250
+          vars:
+            target_shc_group_name: shc
+
+        search:
+          children:
+
+            shc:
+              hosts:
+                sh-01:
+                  ansible_host: 10.5.35.245
+                sh-02:
+                  ansible_host: 10.5.35.246
+                sh-03:
+                  ansible_host: 10.5.35.247
+        
+        clustermanager:
+          hosts:
+            my-cluster-manager-host:
+              ansible_host: 10.5.35.249
+          vars:
+            target_idx_group_name: idx
+          
+        indexer:
+          children:
+            
+            idx:
+              hosts:
+                idx-01:
+                  ansible_host: 10.5.35.252
+                idx-02:
+                  ansible_host: 10.5.35.253
+                idx-03:
+                  ansible_host: 10.5.35.254
+
+          
+
+    uf:
+      children:
+
+        vmware:
+          hosts:
+            uf-01:
+              ansible_host: 10.5.35.221
+            uf-02:
+              ansible_host: 10.5.35.229
+            uf-03:
+              ansible_host: 10.5.35.227
+            uf-04:
+              ansible_host: 10.5.35.226
+            uf-05:
+              ansible_host: 10.5.35.230
+            uf-06:
+              ansible_host: 10.5.35.231
+            uf-07:
+              ansible_host: 10.5.35.232
+            uf-08:
+              ansible_host: 10.5.35.233
+            uf-09:
+              ansible_host: 10.5.35.234
+            uf-10:
+              ansible_host: 10.5.35.235
+            uf-11:
+              ansible_host: 10.5.35.225
+            uf-12:
+              ansible_host: 10.5.35.244

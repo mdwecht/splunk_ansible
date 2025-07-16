@@ -1,0 +1,8 @@
+---
+# group_vars for universal forwarders
+splunk_uri_ds: 10.10.0.211:8089
+splunk_license_group: Peer
+splunk_app_deploy_path: etc/apps  # subdirectory in splunk_home that apps from git should be installed to by Ansible
+systemd_unit_uf: splunkfwd
+git_apps:
+  - name: config_base

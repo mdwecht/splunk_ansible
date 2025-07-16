@@ -1,0 +1,11 @@
+---
+# group vars for cluster manager
+systemd_unit_full: splunk
+splunk_license_group: Peer
+splunk_app_deploy_path: etc/manager-apps  # default subdirectory in splunk_home that apps from git should be installed to, overridable in git_apps if you want to install to etc/apps
+splunk_idxc_rf: 3
+splunk_idxc_sf: 3
+git_version: 1.0.0
+git_apps:
+  - name: my_outputs
+  - name: Splunk_TA_nix

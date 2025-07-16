@@ -1,0 +1,23 @@
+---
+- hosts:
+    - shdeployer
+    - uf
+    - search
+    - deploymentserver
+    - dmc
+    - clustermanager
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: configure_indexer_discovery.yml
+
+- hosts:
+    - shdeployer
+    - search
+    - deploymentserver
+    - dmc
+    - clustermanager
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: configure_forward_internal_logs.yml

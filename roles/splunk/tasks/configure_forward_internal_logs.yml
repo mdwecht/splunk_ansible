@@ -1,0 +1,28 @@
+---
+- name: Forward internal logs
+  community.general.ini_file:
+    path: "{{ splunk_home }}/etc/system/local/outputs.conf"
+    section: tcpout
+    option: indexAndForward
+    value: false
+    owner: "{{ splunk_nix_user }}"
+    group: "{{ splunk_nix_group }}"
+    mode: "0644"
+  become: true
+  notify: restart splunk
+  when: inventory_hostname not in groups['deploymentserver']
+
+- name: Forward internal logs
+  community.general.ini_file:
+    path: "{{ splunk_home }}/etc/system/local/outputs.conf"
+    section: tcpout
+    option: forwardedindex.filter.disable
+    value: true
+    owner: "{{ splunk_nix_user }}"
+    group: "{{ splunk_nix_group }}"
+    mode: "0644"
+  become: true
+  notify: restart splunk
+
+- name: Include task configure indexer discovery
+  ansible.builtin.include_tasks: configure_indexer_discovery.yml

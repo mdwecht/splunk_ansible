@@ -1,0 +1,5 @@
+---
+deploy_target: 10.10.0.202:8089
+git_version: 1.0.0  # This is the golden repo branch for this host! It retires all ID/ED/SB/CM projects and repos
+git_apps:
+  - name: myapp

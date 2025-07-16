@@ -1,0 +1,63 @@
+---
+- name: Run splunk version command to check currently installed version
+  ansible.builtin.include_tasks: check_splunk_version.yml
+
+# Splunk version >= 8.1 supports mode=peer
+# https://docs.splunk.com/Documentation/Splunk/latest/Indexer/ConfigurepeerswithCLI
+# Splunk version < 8.1 supports mode=slave
+# https://docs.splunk.com/Documentation/Splunk/8.0.9/Indexer/ConfigurepeerswithCLI
+- name: Setting clustering mode based on Splunk version number
+  ansible.builtin.set_fact:
+    mode_value: "{% if splunk_version_release | float < 8.1 %}slave{% else %}peer{% endif %}"
+
+- name: Configure idxc member
+  ansible.builtin.command: "{{ splunk_home }}/bin/splunk edit cluster-config -mode {{ mode_value }} -auth {{ splunk_auth }} -master_uri https://{{ splunk_uri_cm }} -replication_port {{ splunk_idxc_rep_port }} -secret {{ splunk_idxc_key }}"
+  become: true
+  become_user: "{{ splunk_nix_user }}"
+  #register: idxc_peer_init_result
+  #changed_when: idxc_peer_init_result.rc == 0 or idxc_peer_init_result.rc == 22
+  #failed_when: idxc_peer_init_result.rc != 22 and idxc_peer_init_result.rc != 0
+  notify: restart splunk
+  no_log: false
+  #until: idxc_peer_init_result.rc == 0
+  #retries: 6
+  #delay: 5
+
+- name: Delete a file
+  ansible.builtin.file:
+    path: /opt/splunk/etc/system/local/inputs.conf
+    state: absent
+  become: true
+  become_user: "{{ splunk_nix_user }}"
+
+- name: Enable receiving ports
+  community.general.ini_file:
+    path: "{{ splunk_home }}/etc/system/local/inputs.conf"
+    section: splunktcp://9997
+    option: disabled
+    value: "0"
+    owner: "{{ splunk_nix_user }}"
+    group: "{{ splunk_nix_group }}"
+    mode: "0644"
+  become: true
+  notify: restart splunk
+
+- name: Change DB environment variable
+  ansible.builtin.lineinfile:
+    path: "{{ splunk_home }}/etc/splunk-launch.conf"
+    regexp: '^SPLUNK_DB='
+    line: SPLUNK_DB=/splunkdb
+
+- name: Disable SplunkWeb for idxc member
+  ansible.builtin.command: "{{ splunk_home }}/bin/splunk disable webserver -auth {{ splunk_auth }}"
+  become: true
+  become_user: "{{ splunk_nix_user }}"
+  notify: restart splunk
+  no_log: false
+
+- name: Disable Monitoring Console for idxc member
+  ansible.builtin.command: "{{ splunk_home }}/bin/splunk disable app splunk_monitoring_console -auth {{ splunk_auth }}"
+  become: true
+  become_user: "{{ splunk_nix_user }}"
+  notify: restart splunk
+  no_log: false

@@ -1,0 +1,15 @@
+---
+# Example playbook to perform either a splunk installation or upgrade
+- hosts:
+    - deploymentserver
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: check_splunk.yml
+
+- hosts:
+    - deploymentserver
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: configure_ds.yml

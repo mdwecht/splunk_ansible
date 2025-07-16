@@ -1,0 +1,7 @@
+#Call this play when making changes to shc members system configs.
+- hosts:
+    - search
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: configure_shc_members.yml

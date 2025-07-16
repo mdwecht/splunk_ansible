@@ -1,0 +1,43 @@
+---
+#This playbook is for a full, first time installation of a distributed splunk environment. Only run this playbook when setting up the environment for the first time.
+- hosts:
+    - all
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: check_splunk.yml
+
+- hosts:
+    - shdeployer
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: configure_shc_deployer.yml
+
+- hosts:
+    - search
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: configure_shc_members.yml
+
+- hosts:
+    - search
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: configure_shc_captain.yml
+
+- hosts:
+    - clustermanager
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: configure_idxc_manager.yml
+
+- hosts:
+    - indexer
+  roles:
+    - ../roles/splunk
+  vars:
+    deployment_task: configure_idxc_member.yml

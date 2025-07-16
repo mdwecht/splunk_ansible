@@ -1,0 +1,72 @@
+---
+# YAML format inventory with nested groups for variable inheritance
+# Mason Morales, Splunk, Inc.
+# References:
+# https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html
+# Read this: https://docs.ansible.com/ansible/2.9/plugins/inventory/yaml.html
+# https://www.digitalocean.com/community/tutorials/how-to-manage-multistage-environments-with-ansible
+# ##########################################################################
+all:
+  children:
+
+    full:
+      children:
+
+        licensemaster:
+          hosts:
+            my-lm-host:
+              ansible_host: 10.10.0.214
+
+        deploymentserver:
+          hosts:
+            my-ds: 
+              ansible_host: 10.10.0.211
+
+        dmc:
+          hosts:
+            my-dmc-host:
+              ansible_host: 10.10.0.213
+
+        shdeployer:
+          hosts:
+            my-shc-deployer:
+              ansible_host: 10.10.0.214
+          vars:
+            target_shc_group_name: shc
+
+        search:
+          children:
+
+            shc:
+              hosts:
+                sh-01:
+                  ansible_host: 10.10.0.202
+        
+        clustermanager:
+          hosts:
+            my-cluster-manager-host:
+              ansible_host: 10.10.0.215
+          vars:
+            target_idx_group_name: idx
+          
+        indexer:
+          children:
+            
+            idx:
+              hosts:
+                idx-01:
+                  ansible_host: 10.10.0.212
+
+    uf:
+      children:
+
+        vmware:
+          hosts:
+            uf-01:
+              ansible_host: 10.10.0.209
+            uf-02:
+              ansible_host: 10.10.0.239
+            uf-03:
+              ansible_host: 10.10.0.201
+            uf-04:
+              ansible_host: 10.10.0.253

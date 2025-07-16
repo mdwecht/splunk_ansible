@@ -1,0 +1,9 @@
+---
+systemd_unit_full: splunk
+splunk_license_group: Peer
+splunk_firewall_ports:
+  - "{{ splunkweb_port }}"
+  - "{{ splunkapi_port }}"
+  - "{{ splunktcpin_port }}"
+  - "{{ splunkhec_port }}"
+  - "{{ splunkidxcrep_port }}"

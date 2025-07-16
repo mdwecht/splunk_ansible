@@ -1,0 +1,7 @@
+---
+splunk_uri_lm: "https://{{ hostvars[groups['licensemaster'][0]].ansible_host }}:8089"
+ansible_user: pf-admin
+ansible_ssh_private_key_file: ~/.ssh/id_rsa
+git_server: ssh://git@10.10.0.209:3000
+git_key: ~/.ssh/id_rsa.pub
+git_project: splunk

@@ -1,0 +1,8 @@
+---
+systemd_unit_full: splunk
+splunk_license_group: Peer
+splunk_mgmt_uri: "{{ ansible_default_ipv4.address }}" #Gets the IP of the target host. Change this later to use the fqdn. Also change in defaults/main.yml
+splunk_firewall_ports:
+  - "{{ splunkweb_port }}"
+  - "{{ splunkapi_port }}"
+  - "{{ splunkshcrep_port }}"

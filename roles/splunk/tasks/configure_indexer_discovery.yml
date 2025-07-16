@@ -1,0 +1,39 @@
+#This only works for one indexer cluster since it is hardcoded in the task. This will need to be changed if planning to configure multiple indexer clusters.
+---
+- name: Enable indexer discovery. tcpout settings.
+  community.general.ini_file:
+    path: "{{ splunk_home }}/etc/system/local/outputs.conf"
+    section: tcpout:{{ splunk_idxc_default_group }}
+    option: "indexerDiscovery"
+    value: "main"
+    owner: "{{ splunk_nix_user }}"
+    group: "{{ splunk_nix_group }}"
+    mode: "0644"
+  become: true
+  notify: restart splunk
+
+- name: Enable indexer discovery. tcpout settings.
+  community.general.ini_file:
+    path: "{{ splunk_home }}/etc/system/local/outputs.conf"
+    section: indexer_discovery:main
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    owner: "{{ splunk_nix_user }}"
+    group: "{{ splunk_nix_group }}"
+    mode: "0644"
+  loop:
+    - { option: 'pass4SymmKey', value: '{{ splunk_idxc_key }}' }
+    - { option: "manager_uri", value: "https://{{ splunk_uri_cm }}" }
+    - { option: 'useAck', value: 'true' }
+  become: true
+  notify: restart splunk
+
+- name: Enable indexer discovery. tcpout settings.
+  community.general.ini_file:
+    path: "{{ splunk_home }}/etc/system/local/outputs.conf"
+    section: tcpout
+    option: "defaultGroup"
+    value: "{{ splunk_idxc_default_group }}"
+    owner: "{{ splunk_nix_user }}"
+    group: "{{ splunk_nix_group }}"
+    mode: "0644"

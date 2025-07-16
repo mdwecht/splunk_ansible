@@ -1,0 +1,30 @@
+---
+- name: Configure SplunkDeploymentServerConfig/local/outputs.conf
+  community.general.ini_file:
+    path: "{{ splunk_home }}/etc/apps/SplunkDeploymentServerConfig/local/outputs.conf"
+    section: indexAndForward
+    option: index
+    value: true
+    owner: "{{ splunk_nix_user }}"
+    group: "{{ splunk_nix_group }}"
+    mode: "0644"
+  become: true
+  notify: restart splunk
+
+- name: Configure SplunkDeploymentServerConfig/local/outputs.conf
+  community.general.ini_file:
+    path: "{{ splunk_home }}/etc/apps/SplunkDeploymentServerConfig/local/outputs.conf"
+    section: selectiveIndexing
+    option: index
+    value: true
+    owner: "{{ splunk_nix_user }}"
+    group: "{{ splunk_nix_group }}"
+    mode: "0644"
+  become: true
+  notify: restart splunk
+
+- name: Include task configure serverclass
+  ansible.builtin.include_tasks: configure_serverclass.yml
+
+- name: Include task configure forward internal logs
+  ansible.builtin.include_tasks: configure_forward_internal_logs.yml
